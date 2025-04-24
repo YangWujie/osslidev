@@ -24,10 +24,6 @@ jobs:
             input: slide1.md
             output: dist/slide1
             base: /${{ github.event.repository.name }}/slide1/
-          - name: slide2
-            input: slide2.md
-            output: dist/slide2
-            base: /${{ github.event.repository.name }}/slide2/
 
     steps:
       - uses: actions/checkout@v4
