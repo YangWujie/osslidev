@@ -24,6 +24,10 @@ jobs:
             input: slide1.md
             output: dist/slide1
             base: /${{ github.event.repository.name }}/slide1/
+          - name: slide2
+            input: slide2.md
+            output: dist/slide2
+            base: /${{ github.event.repository.name }}/slide2/
 
     steps:
       - uses: actions/checkout@v4
@@ -38,8 +42,8 @@ jobs:
       - name: Install dependencies
         run: nci
 
-      - name: Build
-        run: nr build --base /${{matrix.slide.base}}/
+      - name: Build ${{ matrix.slide.name }}
+        run: nr build ${{ matrix.slide.input }} --out ${{ matrix.slide.output }} --base ${{ matrix.slide.base }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
