@@ -43,14 +43,14 @@ jobs:
         run: nci
 
       - name: Build ${{ matrix.slide.name }}
-        run: nr build ${{ matrix.slide.input }} --out ${{ matrix.slide.output }} --base ${{ matrix.slide.base }}
+        run: nr build --base /${{github.event.repository.name}}/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ matrix.slide.output }}
+          path: dist
 
   deploy:
     environment:
