@@ -51,6 +51,7 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ${{ matrix.slide.output }}
+          name: github-pages-${{ matrix.slide.name }} # Unique artifact name per slide
 
   deploy:
     environment:
