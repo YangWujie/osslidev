@@ -42,7 +42,7 @@ jobs:
       - name: Install dependencies
         run: nci
 
-      - name: Build ${{ matrix.slide.name }}
+      - name: Build
         run: nr build --base /${{github.event.repository.name}}/
 
       - name: Setup Pages
