@@ -17,6 +17,17 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        slide:
+          - name: slide1
+            input: slide1.md
+            output: dist/slide1
+            base: /${{ github.event.repository.name }}/slide1/
+          - name: slide2
+            input: slide2.md
+            output: dist/slide2
+            base: /${{ github.event.repository.name }}/slide2/
 
     steps:
       - uses: actions/checkout@v4
@@ -31,15 +42,15 @@ jobs:
       - name: Install dependencies
         run: nci
 
-      - name: Build
-        run: nr build --base /${{github.event.repository.name}}/
+      - name: Build ${{ matrix.slide.name }}
+        run: nr build ${{ matrix.slide.input }} --out ${{ matrix.slide.output }} --base /${{github.event.repository.name}}/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: ${{ matrix.slide.output }}
 
   deploy:
     environment:
