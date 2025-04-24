@@ -39,7 +39,7 @@ jobs:
         run: nci
 
       - name: Build
-        run: nr build --base /${{github.event.repository.name}}/
+        run: nr build --base /${{matrix.slide.base}}/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
