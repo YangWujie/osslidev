@@ -1,5 +1,10 @@
    name: Deploy Slidev to GitHub Pages
 
+   permissions:
+      contents: write  # Allows writing to repository contents (e.g., gh-pages branch)
+      pages: write    # Allows managing GitHub Pages
+      id-token: write # Optional, for additional authentication
+
    on:
      push:
        branches: [main]
