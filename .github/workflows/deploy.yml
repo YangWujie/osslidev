@@ -33,8 +33,13 @@ jobs:
 
       - name: Build
         run: |
-          nr build --entry slide1.md --out dist/p1 --base /${{github.event.repository.name}}/p1/
-          nr build --entry slide2.md --out dist/p2 --base /${{github.event.repository.name}}/p2/
+          # Find all files matching slideXX.md pattern
+          for file in slides[0-9][0-9].md; do
+              # Extract the XX number from filename
+              number=$(echo "$file" | grep -o '[0-9][0-9]')
+              # Run the build command
+              nr build --entry "$file" --out "dist/$number" --base /${{github.event.repository.name}}/$number
+          done
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
