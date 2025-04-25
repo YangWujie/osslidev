@@ -1,57 +1,57 @@
-   name: Deploy Slidev to GitHub Pages
+name: Deploy pages
 
-   permissions:
-      contents: write  # Allows writing to repository contents (e.g., gh-pages branch)
-      pages: write    # Allows managing GitHub Pages
-      id-token: write # Optional, for additional authentication
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
 
-   on:
-     push:
-       branches: [main]
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
-   jobs:
-     build-and-deploy:
-       runs-on: ubuntu-latest
-       steps:
-         # 检出代码
-         - name: Checkout
-           uses: actions/checkout@v3
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
-         # 设置 Node.js 环境
-         - name: Setup Node
-           uses: actions/setup-node@v3
-           with:
-             node-version: '18'
-             cache: 'npm'
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-         # 安装依赖
-         - name: Install Dependencies
-           run: npm ci
+    steps:
+      - uses: actions/checkout@v4
 
-         # 构建第一套幻灯片
-         - name: Build Presentation 1
-           run: |
-            mkdir -p dist
-            npx slidev build --entry slide1.md --out dist/p1 --base /osslidev/p1/
-            ls dist
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
 
-         # 构建第二套幻灯片
-         - name: Build Presentation 2
-           run: |
-             npx slidev build --entry slide2.md --out dist/p2 --base /osslidev/p2/
-             ls dist
+      - name: Setup @antfu/ni
+        run: npm i -g @antfu/ni
 
-         # 创建首页
-         - name: Create Index Page
-           run: |
-             mkdir -p dist
-             echo "<html><body><h1>My Presentations</h1><ul><li><a href='/osslidev/p1/'>Presentation 1</a></li><li><a href='/osslidev/p2/'>Presentation 2</a></li></ul></body></html>" > dist/index.html
-             ls dist
+      - name: Install dependencies
+        run: nci
 
-         # 部署到 GitHub Pages
-         - name: Deploy to GitHub Pages
-           uses: peaceiris/actions-gh-pages@v3
-           with:
-             github_token: ${{ secrets.GITHUB_TOKEN }}
-             publish_dir: ./dist
+      - name: Build
+        run: |
+          mkdir -p dist
+          npx slidev build --entry slide1.md --out dist/p1 --base /${{github.event.repository.name}}/p1/
+          npx slidev build --entry slide2.md --out dist/p2 --base /${{github.event.repository.name}}/p2/
 
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
