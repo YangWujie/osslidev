@@ -50,16 +50,13 @@ jobs:
           EOF
 
           # Find all files matching slideXX.md pattern
-          for file in slide[0-9][0-9].md; do
-              # Check if file exists to avoid errors if no files match
-              if [[ -f "$file" ]]; then
-                  # Extract the XX number from filename
-                  number=$(echo "$file" | grep -o '[0-9][0-9]')
-                  # Run the build command
-                  nr build --entry "$file" --out "dist/$number"  --base /${{github.event.repository.name}}/$number
-                  # Add link to index.html
-                  echo "        <li><a href=\"dist/$number\">Slide $number</a></li>" >> index.html
-              fi
+          for file in slides[0-9][0-9].md; do
+              # Extract the XX number from filename
+              number=$(echo "$file" | grep -o '[0-9][0-9]')
+              # Run the build command
+              nr build --entry "$file" --out "dist/$number" --base /${{github.event.repository.name}}/$number
+              # Add link to index.html
+              echo "        <li><a href=\"dist/$number\">Slide $number</a></li>" >> dist/index.html
           done
 
           # Close HTML structure
