@@ -30,17 +30,22 @@
 
          # 构建第一套幻灯片
          - name: Build Presentation 1
-           run: npx slidev build --entry slides1.md --out dist/p1 --base /osslidev/p1/
+           run: 
+            npx slidev build --entry slides1.md --out dist/p1 --base /osslidev/p1/
+            ls dist
 
          # 构建第二套幻灯片
          - name: Build Presentation 2
-           run: npx slidev build --entry slides2.md --out dist/p2 --base /osslidev/p2/
+           run: 
+             npx slidev build --entry slides2.md --out dist/p2 --base /osslidev/p2/
+             ls dist
 
          # 创建首页
          - name: Create Index Page
            run: |
              mkdir -p dist
              echo "<html><body><h1>My Presentations</h1><ul><li><a href='/p1/'>Presentation 1</a></li><li><a href='/p2/'>Presentation 2</a></li></ul></body></html>" > dist/index.html
+             ls dist
 
          # 部署到 GitHub Pages
          - name: Deploy to GitHub Pages
