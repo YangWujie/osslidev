@@ -25,11 +25,11 @@
 
          # 构建第一套幻灯片
          - name: Build Presentation 1
-           run: npx slidev build --entry slides-p1.md --out dist/p1 --base /<repo-name>/p1/
+           run: npx slidev build --entry slides1.md --out dist/p1 --base /osslidev/p1/
 
          # 构建第二套幻灯片
          - name: Build Presentation 2
-           run: npx slidev build --entry slides-p2.md --out dist/p2 --base /<repo-name>/p2/
+           run: npx slidev build --entry slides2.md --out dist/p2 --base /osslidev/p2/
 
          # 创建首页
          - name: Create Index Page
