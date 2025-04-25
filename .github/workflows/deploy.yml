@@ -56,7 +56,7 @@ jobs:
               # Run the build command
               nr build --entry "$file" --out "dist/$number" --base /${{github.event.repository.name}}/$number
               # Add link to index.html
-              echo "        <li><a href=\"dist/$number\">Slide $number</a></li>" >> dist/index.html
+              echo "        <li><a href=\"$number\">Slide $number</a></li>" >> dist/index.html
           done
 
           # Close HTML structure
