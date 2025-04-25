@@ -30,13 +30,13 @@
 
          # 构建第一套幻灯片
          - name: Build Presentation 1
-           run: 
+           run: |
             npx slidev build --entry slides1.md --out dist/p1 --base /osslidev/p1/
             ls dist
 
          # 构建第二套幻灯片
          - name: Build Presentation 2
-           run: 
+           run: |
              npx slidev build --entry slides2.md --out dist/p2 --base /osslidev/p2/
              ls dist
 
