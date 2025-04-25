@@ -1,8 +1,8 @@
 ---
-class: text-center
+title: 课程简介
 ---
 
-# 课程简介
+# 课程简介1
 
 Hello, **Slidev**!
 
