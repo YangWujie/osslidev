@@ -2,6 +2,9 @@
     "slidev.include": [
         "**/slides.md",
         "slide2.md",
-        "slide1.md"
+        "slide1.md",
+        "slides01.md",
+        "slides00.md",
+        "slides02.md"
     ]
 }
