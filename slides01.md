@@ -66,11 +66,11 @@ Use UnoCSS classes and Vue components to style and enrich your slides:
 
 <style>
 .slidev-layout {
-  font-size: 32px;
+  font-size: 28px;
 }
 
 .slidev-layout h1 {
-  font-size: 72px; /* Set font size for h1 (main title) */
+  font-size: 64px; /* Set font size for h1 (main title) */
 }
 
 .slidev-layout h2 {
@@ -78,7 +78,7 @@ Use UnoCSS classes and Vue components to style and enrich your slides:
 }
 
 .slidev-layout h3 {
-  font-size: 42px; /* Set font size for h3, if needed */
+  font-size: 40px; /* Set font size for h3, if needed */
 }
 
 /* 确保标题和内容的间距 */
@@ -86,4 +86,9 @@ Use UnoCSS classes and Vue components to style and enrich your slides:
   margin-top: 2.5rem;
   margin-bottom: 3.5rem; /* 标题和内容之间的间距 */
 }
+
+.slidev-layout p {
+  line-height: 1.5;
+}
+
 </style>
