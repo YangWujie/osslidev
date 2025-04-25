@@ -31,6 +31,7 @@
          # 构建第一套幻灯片
          - name: Build Presentation 1
            run: |
+            mkdir -p dist
             npx slidev build --entry slides1.md --out dist/p1 --base /osslidev/p1/
             ls dist
 
