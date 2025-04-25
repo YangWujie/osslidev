@@ -33,9 +33,8 @@ jobs:
 
       - name: Build
         run: |
-          mkdir -p dist
-          npx slidev build --entry slide1.md --out dist/p1 --base /${{github.event.repository.name}}/p1/
-          npx slidev build --entry slide2.md --out dist/p2 --base /${{github.event.repository.name}}/p2/
+          nr build --entry slide1.md --out dist/p1 --base /${{github.event.repository.name}}/p1/
+          nr build --entry slide2.md --out dist/p2 --base /${{github.event.repository.name}}/p2/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
