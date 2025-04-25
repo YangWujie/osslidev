@@ -45,7 +45,7 @@
          - name: Create Index Page
            run: |
              mkdir -p dist
-             echo "<html><body><h1>My Presentations</h1><ul><li><a href='/p1/'>Presentation 1</a></li><li><a href='/p2/'>Presentation 2</a></li></ul></body></html>" > dist/index.html
+             echo "<html><body><h1>My Presentations</h1><ul><li><a href='/osslidev/p1/'>Presentation 1</a></li><li><a href='/osslidev/p2/'>Presentation 2</a></li></ul></body></html>" > dist/index.html
              ls dist
 
          # 部署到 GitHub Pages
