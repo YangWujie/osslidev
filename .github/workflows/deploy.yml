@@ -16,6 +16,8 @@
          # 检出代码
          - name: Checkout
            uses: actions/checkout@v3
+           with:
+            fetch-depth: 0  # Fetch all history to ensure latest commit
 
          # 设置 Node.js 环境
          - name: Setup Node
