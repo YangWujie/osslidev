@@ -33,8 +33,10 @@ jobs:
 
       - name: Build
         run: |
+          mkdir -p dist
+
           # Initialize index.html with basic HTML structure
-          cat > index.html <<EOF
+          cat > dist/index.html <<EOF
           <!DOCTYPE html>
           <html lang="en">
           <head>
