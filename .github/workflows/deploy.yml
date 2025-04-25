@@ -16,8 +16,6 @@
          # 检出代码
          - name: Checkout
            uses: actions/checkout@v3
-           with:
-            fetch-depth: 0  # Fetch all history to ensure latest commit
 
          # 设置 Node.js 环境
          - name: Setup Node
@@ -34,13 +32,13 @@
          - name: Build Presentation 1
            run: |
             mkdir -p dist
-            npx slidev build --entry slides1.md --out dist/p1 --base /osslidev/p1/
+            npx slidev build --entry slide1.md --out dist/p1 --base /osslidev/p1/
             ls dist
 
          # 构建第二套幻灯片
          - name: Build Presentation 2
            run: |
-             npx slidev build --entry slides2.md --out dist/p2 --base /osslidev/p2/
+             npx slidev build --entry slide2.md --out dist/p2 --base /osslidev/p2/
              ls dist
 
          # 创建首页
