@@ -2,8 +2,9 @@
 
 To start the slide show:
 
-- `pnpm install`
-- `pnpm dev`
+- `npm i -g @antfu/ni`
+- `nci`
+- `npm run dev -- slides00.md`
 - visit <http://localhost:3030>
 
 Edit the [slides.md](./slides.md) to see the changes.
