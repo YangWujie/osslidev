@@ -6,5 +6,6 @@
         "slides01.md",
         "slides00.md",
         "slides02.md"
-    ]
+    ],
+    "slidev.preview-sync": false
 }
