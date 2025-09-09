@@ -55,6 +55,180 @@ title: 操作系统引论
 　
 ---
 
+## 操作系统和浏览器之间的区别？
+- 浏览器能称得上一个操作系统吗？
+- 如果浏览器不能称得上一个操作系统，那么 WSL 和 Lima 能称得上操作系统吗？
+- WSL 能称得上操作系统，浏览器为什么不能？
+
+---
+
+### 浏览器里的操作系统
+- [v86](https://copy.sh/v86/)
+- [Puter](https://puter.com/)
+- Many other...
+
+---
+
+### 操作系统和浏览器的区别到底是什么？
+- 虚拟无处不在：操作系统和浏览器都有虚拟能力
+- 虚实并无明显界限：浏览器里的操作系统并不知道它运行在浏览器里
+- 操作系统认为自己直接运行在硬件之上并负责管理硬件
+- 操作系统对硬件有要求，需要得到硬件某些方面的支持
+- 操作系统得不到软件支持：没有库函数
+
+---
+
+### 从程序员的角度看
+- 每个程序有可以执行代码的CPU，有能用来存储数据和代码的存储空间
+- 多个程序可以并发执行
+- 每个程序有自己的输入输出设备
+
+---
+
+### 虚拟 CPU: cpu.c
+
+```c {*}{maxHeight:'400px'}
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <sys/time.h>
+  #include <sys/stat.h>
+  #include <assert.h>
+      
+  double GetTime() {
+    struct timeval t;
+    int rc = gettimeofday(&t, NULL);
+    assert(rc == 0);
+    return (double) t.tv_sec + (double) t.tv_usec/1e6;
+  }
+  
+  void Spin(int howlong) {
+    double t = GetTime();
+    while ((GetTime() - t) < (double) howlong)
+    ; // do nothing in loop
+  }
+  
+  int main(int argc, char *argv[])
+  {
+    if (argc != 2) {
+      fprintf(stderr, "usage: cpu <string>\n");
+      exit(1);
+    }
+    char *str = argv[1];
+  
+    while (1) {
+      printf("%s\n", str);
+      Spin(1);
+    }
+    return 0;
+  }
+
+```
+
+---
+
+```bash
+gcc cpu.c -o cpu
+./cpu "A"
+```
+
+该程序运行后，每隔1秒打印一个“A”并换行。
+
+按 Ctrl + c 可结束程序。
+
+---
+
+```bash
+./cpu "A" & ./cpu "B" & ./cpu "C" & ./cpu "D" &
+
+killall cpu
+```
+
+---
+
+### mem.c
+
+```c
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) { 
+        fprintf(stderr, "usage: mem <value>\n"); 
+        exit(1); 
+    } 
+    int *p; 
+    p = malloc(sizeof(int));
+    assert(p != NULL);
+    printf("(%d) addr pointed to by p: %p\n", (int) getpid(), p);
+    *p = atoi(argv[1]); // assign value to addr stored in p
+    while (1) {
+        sleep(1);
+        *p = *p + 1;
+        printf("(%d) value of p: %d\n", getpid(), *p);
+    }
+    return 0;
+}
+```
+
+---
+
+```bash
+gcc mem.c -o mem
+./mem "100"
+```
+
+该程序运行后，每隔1秒打印一行信息，其中包括进程号及某个内存单元中的值。
+
+按 Ctrl + c 可结束程序。
+
+---
+
+### Address Space Layout Randomization
+
+运行mem之前，首先禁用Linux的ASLR。命令如下：
+
+```bash
+echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
+```
+
+详细信息请参考：[How can I temporarily disable ASLR?](https://askubuntu.com/questions/318315/how-can-i-temporarily-disable-aslr-address-space-layout-randomization)
+
+---
+
+### ./mem 100
+```
+          (16712) addr pointed to by p: 0x555555756260
+          (16712) value of p: 101
+          (16712) value of p: 102
+          (16712) value of p: 103
+          (16712) value of p: 104
+          (16712) value of p: 105
+          (16712) value of p: 106
+          (16712) value of p: 107
+          (16712) value of p: 108
+```
+
+---
+
+### ./mem 1
+```
+          (16815) addr pointed to by p: 0x555555756260
+          (16815) value of p: 2
+          (16815) value of p: 3
+          (16815) value of p: 4
+          (16815) value of p: 5
+          (16815) value of p: 6
+          (16815) value of p: 7
+          (16815) value of p: 8
+          (16815) value of p: 9
+```
+        
+相同的地址，不同的数据：虚拟存储器
+
+---
+
 ## 操作系统的作用
 
 ---
@@ -114,9 +288,10 @@ sudo apt install build-essential
 ```
 
 对于 Mac 用户：
-- 安装 Xcode 命令行工具：
+- 安装 [Lima](https://lima-vm.io/docs/installation/)：
+- 在 Linux 上安装 gcc 工具链：
 ```bash
-xcode-select --install
+sudo apt install build-essential
 ```
 
 ---
@@ -155,8 +330,57 @@ exit_group(0)                           = ?
 
 ---
 
+### 查看动态库的名字
+
+```bash
+yang@SurfaceLaptop4:~$ ldd ./hello
+        linux-vdso.so.1 (0x00007ffc202f1000)
+        libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007864d3600000)
+        /lib64/ld-linux-x86-64.so.2 (0x00007864d38df000)
+```
+---
+
 ### 查找系统调用对应函数的入口
-```{8,11}
+
+```{1,8,11}
+yang@SurfaceLaptop4:~$ readelf -s /lib/x86_64-linux-gnu/libc.so.6 | grep write
+   101: 0000000000126160   173 FUNC    GLOBAL DEFAULT   17 pwritev@@GLIBC_2.10
+   129: 0000000000129850   149 FUNC    WEAK   DEFAULT   17 writev@@GLIBC_2.2.5
+  1931: 0000000000126160   173 FUNC    GLOBAL DEFAULT   17 pwritev64@@GLIBC_2.10
+  2182: 00000000000fa500   157 FUNC    WEAK   DEFAULT   17 pwrite@@GLIBC_2.2.5
+  2213: 00000000000a7b90    26 FUNC    GLOBAL DEFAULT   17 aio_write@@GLIBC_2.34
+  2217: 00000000000a7b90    26 FUNC    GLOBAL DEFAULT   17 aio_write@GLIBC_2.2.5
+  2650: 000000000011c560   157 FUNC    WEAK   DEFAULT   17 __write@@GLIBC_2.2.5
+  2680: 00000000000fa500   157 FUNC    WEAK   DEFAULT   17 pwrite64@@GLIBC_2.2.5
+  2851: 0000000000086940   510 FUNC    WEAK   DEFAULT   17 fwrite@@GLIBC_2.2.5
+  2948: 000000000011c560   157 FUNC    WEAK   DEFAULT   17 write@@GLIBC_2.2.5
+  2961: 0000000000126210   347 FUNC    GLOBAL DEFAULT   17 pwritev2@@GLIBC_2.26
+```
+
+---
+
+### 系统调用指令
+
+```{1,10}
+yang@SurfaceLaptop4:~$ objdump -D /lib/x86_64-linux-gnu/libc.so.6 --start-address=0x000000000011c560 --stop-address
+=$((0x000000000011c560+100))
+/lib/x86_64-linux-gnu/libc.so.6:     file format elf64-x86-64
+Disassembly of section .text:
+000000000011c560 <__write@@GLIBC_2.2.5>:
+  11c560:       f3 0f 1e fa             endbr64
+  11c564:       80 3d d5 ea 0e 00 00    cmpb   $0x0,0xeead5(%rip)        # 20b040 <__libc_single_threaded@@GLIBC_2.32>
+  11c56b:       74 13                   je     11c580 <__write@@GLIBC_2.2.5+0x20>
+  11c56d:       b8 01 00 00 00          mov    $0x1,%eax
+  11c572:       0f 05                   syscall
+  11c574:       48 3d 00 f0 ff ff       cmp    $0xfffffffffffff000,%rax
+  11c57a:       77 54                   ja     11c5d0 <__write@@GLIBC_2.2.5+0x70>
+  11c57c:       c3
+```
+
+---
+
+### 查找系统调用对应函数的入口(ARM)
+```{1,8,11}
 yang@wsl:~$ readelf -s /lib/aarch64-linux-gnu/libc.so.6 | grep write
    104: 00000000000e8170   244 FUNC    GLOBAL DEFAULT   12 pwritev@@GLIBC_2.17
    129: 00000000000eb5e0   208 FUNC    WEAK   DEFAULT   12 writev@@GLIBC_2.17
@@ -173,9 +397,9 @@ yang@wsl:~$ readelf -s /lib/aarch64-linux-gnu/libc.so.6 | grep write
 
 ---
 
-### 系统调用指令
+### 系统调用指令(ARM)
 
-```{13}
+```{1,13}
 yang@wsl:~$ objdump -D /lib/aarch64-linux-gnu/libc.so.6 --start-address=0x000e1d20 --stop-address=$((0x000e1d20+100))
 
 00000000000e1d20 <__write@@GLIBC_2.17>:
