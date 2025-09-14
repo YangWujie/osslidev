@@ -761,7 +761,7 @@ sudo apt-get install git build-essential gdb-multiarch qemu-system-misc gcc-risc
 ### 在 xv6 里写第一个程序
 参考材料：
 - [Lab: Xv6 and Unix utilities](https://pdos.csail.mit.edu/6.828/2025/labs/util.html)
-- [参看代码](https://github.com/YangWujie/xv6-lab-answer)
+- [参考代码](https://github.com/YangWujie/xv6-lab-answer)
 
 ---
 
