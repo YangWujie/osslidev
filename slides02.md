@@ -612,6 +612,159 @@ qemu-system-i386 -hda test.bin
 
 ---
 
+### fork 系统调用
+```c {*}{maxHeight:'400px'}
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int main(int argc, char *argv[]) {
+  printf("hello (pid:%d)\n", (int) getpid());
+  int rc = fork();
+  if (rc < 0) {
+    // fork failed
+    fprintf(stderr, "fork failed\n");
+    exit(1);
+  } else if (rc == 0) {
+    // child (new process)
+    printf("child (pid:%d)\n", (int) getpid());
+  } else {
+    // parent goes down this path (main)
+    printf("parent of %d (pid:%d)\n", rc, (int) getpid());
+  }
+
+  return 0;
+}
+```
+
+---
+
+### wait 系统调用
+```c {*}{maxHeight:'400px'}
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
+int main(int argc, char *argv[]) {
+  printf("hello (pid:%d)\n", (int) getpid());
+  int rc = fork();
+  if (rc < 0) {
+    // fork failed
+    fprintf(stderr, "fork failed\n");
+    exit(1);
+  } else if (rc == 0) {
+    // child (new process)
+    printf("child (pid:%d)\n", (int) getpid());
+  } else {
+    // parent goes down this path (main)
+    int rc_wait = wait(NULL);
+    printf("parent of %d (rc_wait:%d) (pid:%d)\n", rc, rc_wait, (int) getpid());
+  }
+
+  return 0;
+}
+```
+
+---
+
+### exec 系统调用
+```c {*}{maxHeight:'400px'}
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <sys/wait.h>
+
+int main(int argc, char *argv[]) {
+  printf("hello (pid:%d)\n", (int) getpid());
+  int rc = fork();
+  if (rc < 0) {
+    // fork failed
+    fprintf(stderr, "fork failed\n");
+    exit(1);
+  } else if (rc == 0) {
+    // child (new process)
+    printf("child (pid:%d)\n", (int) getpid());
+    char *myargs[3];
+    myargs[0] = strdup("wc"); // program: "wc"
+    myargs[1] = strdup("p3.c"); // arg: input file
+    myargs[2] = NULL; // mark end of array
+    execvp(myargs[0], myargs); // runs word count
+    printf("this shouldn’t print out");
+  } else {
+    // parent goes down this path (main)
+    int rc_wait = wait(NULL);
+    printf("parent of %d (rc_wait:%d) (pid:%d)\n", rc, rc_wait, (int) getpid());
+  }
+
+  return 0;
+}
+```
+
+---
+
+### 为什么要分成两个步骤？
+灵活。在 shell 里非常容易实现重定向：
+
+```c {*}{maxHeight:'400px'}
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <fcntl.h>
+#include <sys/wait.h>
+
+int main(int argc, char *argv[]) {
+  int rc = fork();
+  if (rc < 0) {
+    // fork failed
+    fprintf(stderr, "fork failed\n");
+    exit(1);
+  } else if (rc == 0) {
+    // child: redirect standard output to a file
+    close(STDOUT_FILENO);
+    open("./p4.output", O_CREAT|O_WRONLY|O_TRUNC, S_IRWXU);
+    // now exec "wc"...
+    char *myargs[3];
+    myargs[0] = strdup("wc"); // program: "wc"
+    myargs[1] = strdup("p4.c"); // arg: input file
+    myargs[2] = NULL;
+    // mark end of array
+    execvp(myargs[0], myargs); // runs word count
+    printf("this shouldn’t print out");
+  } else {
+    // parent goes down this path (main)
+    int rc_wait = wait(NULL);
+  }
+
+  return 0;
+}
+```
+
+---
+
+## xv6
+
+[Xv6, a simple Unix-like teaching operating system](https://pdos.csail.mit.edu/6.828/2025/xv6.html)
+
+---
+
+### xv6 环境准备
+
+```bash
+sudo apt-get install git build-essential gdb-multiarch qemu-system-misc gcc-riscv64-linux-gnu binutils-riscv64-linux-gnu
+```
+
+---
+
+### 在 xv6 里写第一个程序
+参考材料：
+- [Lab: Xv6 and Unix utilities](https://pdos.csail.mit.edu/6.828/2025/labs/util.html)
+- [参看代码](https://github.com/YangWujie/xv6-lab-answer)
+
+---
+
 ## 操作系统的发展过程
 - 无操作系统的计算机系统
 - 单道批处理系统
