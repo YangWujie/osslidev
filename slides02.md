@@ -758,6 +758,24 @@ sudo apt-get install git build-essential gdb-multiarch qemu-system-misc gcc-risc
 
 ---
 
+### xv6 概览
+```bash
+git clone git://g.csail.mit.edu/xv6-labs-2025
+cd cd xv6-labs-2025
+git ls-files | xargs wc -l
+```
+---
+
+### 用户态概览
+- user 目录里的代码运行在用户态
+- 里面有很多常用命令
+- 其中最重要的是 shell (sh.c)
+- 用户态代码一般不认为是操作系统的组成部分
+
+---
+
+
+
 ### 在 xv6 里写第一个程序
 参考材料：
 - [Lab: Xv6 and Unix utilities](https://pdos.csail.mit.edu/6.828/2025/labs/util.html)
