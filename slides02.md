@@ -774,7 +774,14 @@ git ls-files | xargs wc -l
 
 ---
 
+### 系统调用：从用户程序到内核代码
+- user/user.h: 定义系统调用原型
+- user/usys.pl: perl脚本，生成系统调用汇编指令（也可直接手写），存放在usys.S中
+- user/usys.S中使用了SYS_fork, SYS_exit等符号
+- 这些符号在 kernel/syscall.h 中定义
+- 在 kernel/syscall.c 中，这些符号关联到具体的内核函数
 
+---
 
 ### 在 xv6 里写第一个程序
 参考材料：
